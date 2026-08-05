@@ -286,5 +286,3 @@ network:
 
 !\[pfSense Filterlog Archives](screenshots/pfsense-filterlog-archives.png)
 
-
-

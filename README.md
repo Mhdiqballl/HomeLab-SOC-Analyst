@@ -1,12 +1,12 @@
 # HomeLab SOC Analyst
 
-Project homelab yang dibangun sebagai bagian dari transisi karier dari **Network Engineer** ke **SOC Analyst**. Repository ini mendokumentasikan proses membangun infrastruktur jaringan, SIEM, simulasi serangan, hingga incident response secara end-to-end.
+Project homelab ini saya bangun sendiri dari nol sebagai sarana belajar dan pembuktian skill. Semua konfigurasi, troubleshooting, dan dokumentasi saya kerjakan mandiri — mulai dari setup jaringan dengan VLAN, deploy SIEM Wazuh, mengirim log dari pfSense dan Windows, sampai simulasi serangan dan analisis detection-nya.
 
 \---
 
 ## 👤 Tentang Saya
 
-Saya adalah seorang **Network Engineer** yang sedang bertransisi ke bidang **Cybersecurity, khususnya SOC Analyst**. Project ini saya bangun untuk mempraktikkan dan mendemonstrasikan kemampuan monitoring, deteksi ancaman, dan incident response menggunakan tools yang umum dipakai di industri.
+Saya adalah seorang **Network Engineer** yang sedang bertransisi ke bidang Cyber Security. Project ini saya bangun untuk mempraktikkan dan mendemonstrasikan kemampuan monitoring, deteksi ancaman, dan incident response menggunakan tools yang umum dipakai di industri.
 
 * LinkedIn:https://www.linkedin.com/in/mhd-iqball/
 * Email: mhdibll17@gmail.com

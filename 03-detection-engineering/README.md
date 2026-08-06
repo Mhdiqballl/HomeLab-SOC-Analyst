@@ -20,11 +20,15 @@ Mensimulasikan berbagai teknik serangan berbasis MITRE ATT\&CK, kemudian mengana
 
 \- Sysmon
 
+\- PsExec / WMI
+
 
 
 \## Cakupan
 
 Project ini mencakup Tier 1 sampai Tier 3 dari roadmap serangan \& deteksi
+
+
 
 \## Ringkasan Case
 
@@ -36,11 +40,11 @@ Project ini mencakup Tier 1 sampai Tier 3 dari roadmap serangan \& deteksi
 
 | 2 | Brute Force | T1110 | Hydra | ✅ Done |
 
-| 3 | Exploitasi Windows Service | T1210 | Metasploit | ⏳ |
+| 3 | Exploitasi Windows Service | T1210 | Metasploit | ✅ Done |
 
-| 4 | Credential Dumping | T1003 | Mimikatz | ⏳ |
+| 4 | Credential Dumping | T1003 | Mimikatz | ✅ Done |
 
-| 5 | Lateral Movement | T1021 | PsExec/WMI | ⏳ |
+| 5 | Lateral Movement | T1021 | PsExec/WMI | ✅ Done |
 
 | 6 | SQL Injection | T1190 | SQLmap | ⏳ |
 
@@ -86,23 +90,13 @@ Simulasi reconnaissance phase di mana attacker (Kali Linux, 192.168.10.100) mela
 
 \### Analisis
 
-Wazuh sebagai HIDS fokus pada aktivitas endpoint, bukan traffic jaringan. Nmap SYN scan tidak membuat koneksi TCP penuh sehingga tidak tercatat di Windows Event Log atau Sysmon Event ID 3.
+Wazuh sebagai HIDS fokus pada endpoint, bukan traffic jaringan. Perlu custom rule untuk deteksi port scanning.
 
 
 
 \### Rekomendasi
 
 Perlu custom detection rule untuk mendeteksi pola scanning (threshold koneksi dari 1 IP dalam waktu singkat) atau integrasi log pfSense ke Wazuh alert pipeline.
-
-
-
-\### Screenshot
-
-!\[Nmap Scan](screenshots/case1-nmap-scan.png)
-
-!\[pfSense Firewall Log](screenshots/case1-pfsense-log.png)
-
-!\[UFW Block](screenshots/case1-ufw-block.png)
 
 
 
@@ -144,17 +138,7 @@ Attacker (Kali Linux) melakukan brute force SSH ke Ubuntu-Wazuh (192.168.20.30) 
 
 \### Analisis
 
-Wazuh default rule berhasil mendeteksi brute force SSH tanpa perlu custom rule. Rule 5760 trigger untuk setiap failed authentication.
-
-
-
-\### Screenshot
-
-!\[Hydra Attack](screenshots/case2-hydra.png)
-
-!\[SSH Failed Log](screenshots/case2-ssh-failed.png)
-
-!\[Wazuh Alert](screenshots/case2-wazuh-alert.png)
+Wazuh default rule berhasil mendeteksi brute force SSH tanpa perlu custom rule.
 
 
 
@@ -162,13 +146,35 @@ Wazuh default rule berhasil mendeteksi brute force SSH tanpa perlu custom rule. 
 
 
 
-\## Case 3: Exploitasi Windows Service (⏳)
+\## Case 3: Exploitasi Windows Service
 
 \- \*\*MITRE ATT\&CK:\*\* T1210 (Exploitation of Remote Services)
 
 \- \*\*Tools:\*\* Metasploit Framework (Kali Linux)
 
-\- \*(dokumentasi setelah dikerjakan)\*
+
+
+\### Skenario
+
+Attacker mencoba mengeksploitasi Windows 11 menggunakan EternalBlue. Setelah gagal (target sudah dipatch), digunakan SMB Delivery untuk menangkap NTLMv2 hash kredensial Administrator.
+
+
+
+\### Langkah Serangan
+
+1\. \*\*EternalBlue:\*\* gagal — target tidak vulnerable
+
+2\. \*\*SMB Delivery:\*\* berhasil — payload dijalankan via `rundll32.exe`
+
+3\. NTLMv2 hash Administrator tertangkap
+
+
+
+\### Deteksi
+
+\- ✅ \*\*Wazuh Rule 92031\*\* — Discovery activity executed
+
+\- ✅ \*\*pfSense\*\* mencatat traffic SMB port 445 antar VLAN
 
 
 
@@ -176,13 +182,35 @@ Wazuh default rule berhasil mendeteksi brute force SSH tanpa perlu custom rule. 
 
 
 
-\## Case 4: Credential Dumping (⏳)
+\## Case 4: Credential Dumping
 
 \- \*\*MITRE ATT\&CK:\*\* T1003 (OS Credential Dumping)
 
 \- \*\*Tools:\*\* Mimikatz
 
-\- \*(dokumentasi setelah dikerjakan)\*
+
+
+\### Skenario
+
+Mimikatz dijalankan di Windows Server untuk mengekstrak kredensial dari memory LSASS.
+
+
+
+\### Langkah Serangan
+
+1\. Download \& jalankan Mimikatz
+
+2\. `privilege::debug` → `sekurlsa::logonpasswords`
+
+3\. NTLM hash berhasil diekstrak
+
+
+
+\### Deteksi
+
+\- ✅ \*\*Sysmon Event ID 10\*\* — Credential Dumping (T1003), mimikatz.exe → lsass.exe
+
+\- ✅ \*\*Wazuh Rule 92900 Level 12\*\* — Lsass process accessed by mimikatz.exe
 
 
 
@@ -190,13 +218,35 @@ Wazuh default rule berhasil mendeteksi brute force SSH tanpa perlu custom rule. 
 
 
 
-\## Case 5: Lateral Movement (⏳)
+\## Case 5: Lateral Movement
 
 \- \*\*MITRE ATT\&CK:\*\* T1021 (Remote Services)
 
-\- \*\*Tools:\*\* PsExec/WMI
+\- \*\*Tools:\*\* WMI (wmic)
 
-\- \*(dokumentasi setelah dikerjakan)\*
+
+
+\### Skenario
+
+Setelah mendapatkan kredensial dari Mimikatz, attacker melakukan lateral movement dari Windows Server ke Windows 11 menggunakan WMI.
+
+
+
+\### Langkah Serangan
+
+1\. Konfigurasi Local Security Policy di target
+
+2\. `wmic /node:192.168.30.10 process call create "cmd.exe"`
+
+3\. ReturnValue = 0 (sukses)
+
+
+
+\### Deteksi
+
+\- ✅ \*\*Sysmon Event ID 1\*\* — cmd.exe via WmiPrvSE.exe (T1047)
+
+\- ✅ \*\*Wazuh Rule 92031\*\* — Discovery activity executed
 
 
 
@@ -212,5 +262,55 @@ Wazuh default rule berhasil mendeteksi brute force SSH tanpa perlu custom rule. 
 
 \- \*\*Target:\*\* DVWA
 
-\- \*(dokumentasi setelah dikerjakan)\*
+
+
+\---
+
+
+
+\## Screenshot
+
+
+
+\### Case 1: Port Scanning
+
+!\[Nmap Scan](screenshots/tier1-case1-kali-nmap-scan-port.png)
+
+!\[pfSense Firewall Log](screenshots/tier1-case1-pfsense-filter-log.png)
+
+!\[UFW Block](screenshots/tier1-case1-ufw-block-wazuh-archives.png)
+
+
+
+\### Case 2: Brute Force
+
+!\[Hydra Attack](screenshots/tier1-case2-hydra-attack.png)
+
+!\[Wazuh Alert](screenshots/tier1-case2-wazuh-alert.png)
+
+
+
+\### Case 3: Exploitasi Windows
+
+!\[Metasploit Exploit](screenshots/tier2-case3-metasploit-exploit.png)
+
+!\[Wazuh Detection](screenshots/tier2-case3-wazuh-92031.png)
+
+
+
+\### Case 4: Credential Dumping
+
+!\[Mimikatz Output](screenshots/tier2-case4-mimikatz-output.png)
+
+!\[Sysmon Event 10](screenshots/tier2-case4-sysmon-event10.png)
+
+!\[Wazuh Level 12](screenshots/tier2-case4-wazuh-rule.id-92900.png)
+
+
+
+\### Case 5: Lateral Movement
+
+!\[WMI Command](screenshots/tier2-case5-wmi-command.png)
+
+!\[Sysmon Event 1](screenshots/tier2-case5-sysmon-event1.png)
 

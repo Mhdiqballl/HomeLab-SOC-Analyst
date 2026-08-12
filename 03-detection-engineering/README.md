@@ -46,7 +46,7 @@ Project ini mencakup Tier 1 sampai Tier 3 dari roadmap serangan \& deteksi
 
 | 5 | Lateral Movement | T1021 | PsExec/WMI | ✅ Done |
 
-| 6 | SQL Injection | T1190 | SQLmap | ⏳ |
+| 6 | SQL Injection | T1190 | SQLmap | ✅ Done |
 
 
 
@@ -254,13 +254,43 @@ Setelah mendapatkan kredensial dari Mimikatz, attacker melakukan lateral movemen
 
 
 
-\## Case 6: SQL Injection (⏳)
+\## Case 6: SQL Injection
 
 \- \*\*MITRE ATT\&CK:\*\* T1190 (Exploit Public-Facing Application)
 
-\- \*\*Tools:\*\* SQLmap (Kali Linux)
+\- \*\*Tools:\*\* Manual SQL Injection (browser)
 
-\- \*\*Target:\*\* DVWA
+\- \*\*Target:\*\* DVWA (192.168.20.40)
+
+
+
+\### Langkah Serangan
+
+1\. Setup DVWA di Ubuntu Server, install Wazuh Agent
+
+2\. Set security level Low
+
+3\. Error confirmation: `1'` → 500 Internal Server Error
+
+4\. Dump semua user: `1' OR '1'='1` → 5 user muncul
+
+5\. Apache access log mencatat semua traffic SQLi dari Kali
+
+
+
+\### Deteksi
+
+\- ✅ Apache access log mencatat serangan (500 error + 200 dump)
+
+\- ✅ Wazuh Agent dvwa-webapp active (Rule 503/506)
+
+\- ❌ Alert SQL Injection spesifik tidak muncul (perlu custom decoder Apache)
+
+
+
+\### Analisis
+
+Wazuh default tidak memiliki decoder untuk Apache access log. Perlu custom rule untuk mendeteksi pola SQL Injection (UNION SELECT, OR '1'='1, error 500 berturut-turut).
 
 
 
@@ -313,4 +343,22 @@ Setelah mendapatkan kredensial dari Mimikatz, attacker melakukan lateral movemen
 !\[WMI Command](screenshots/tier2-case5-wmi-command.png)
 
 !\[Sysmon Event 1](screenshots/tier2-case5-sysmon-event1.png)
+
+!\[Wazuh Detection](screenshots/tier2-case5-wazuh-92031.png)
+
+
+
+\### Case 6: SQL Injection
+
+!\[DVWA Setup](screenshots/tier3-case6-dvwa-setup.png)
+
+!\[SQLi Normal](screenshots/tier3-case6-sqli-normal.png)
+
+!\[SQLi Error](screenshots/tier3-case6-sqli-error.png)
+
+!\[SQLi Dump](screenshots/tier3-case6-sqli-dump.png)
+
+!\[Apache Log](screenshots/tier3-case6-apache-log.png)
+
+!\[Wazuh Agent Alert](screenshots/tier3-case6-wazuh-agent-alert.png)
 

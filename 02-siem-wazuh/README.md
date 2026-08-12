@@ -34,6 +34,8 @@ Membangun SIEM (Security Information and Event Management) menggunakan Wazuh unt
 
 \- Agent Windows 11: `192.168.30.10` (ENDPOINT VLAN 30)
 
+\- Agent DVWA: `192.168.20.40` (DVWA VLAN 20)
+
 \- pfSense Log Forwarding: syslog UDP 514 → Wazuh archives
 
 
@@ -258,7 +260,11 @@ network:
 
 !\[Agents Active](screenshots/dashboard-wazuh-agent-active.png)
 
+!\[Agents Active](screenshots/dashboard-wazuh-agent-dvwa-active.png)
+
 !\[Update Wazuh Agent](screenshots/update-wazuh-agent-windows.png)
+
+
 
 
 

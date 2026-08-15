@@ -71,7 +71,7 @@ VBoxManage modifyvm "pfSense-Firewall" --nic7 intnet --intnet7 "LabNet-ENDPOINT"
 
 ### pfSense Configuration
 ![Pfsense Console](screenshots/pfsense-console.png)
-![VLAN Server Config](screenshots/pfsense-vlan-server-config.png)
+![VLAN Server Config](screenshots/pfsense-interface-server-config.png)
 ![ARP Table](screenshots/pfsense-arp-table.png)
 ![Interface Assignments](screenshots/pfsense-interface-assignments.png)
 ![Management Interface](screenshots/pfsense-interface-mgmt-config.png)

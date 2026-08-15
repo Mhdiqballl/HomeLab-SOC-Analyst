@@ -129,25 +129,50 @@ network:
 
 ### Instalasi Wazuh
 
-### Instalasi Wazuh
+#### Log Instalasi Berhasil
 ![Log Instalasi Berhasil](screenshots/wazuh-installation-done.png)
+
+#### Dashboard Login
 ![Dashboard Login](screenshots/wazuh-dashboard-first-login.png)
 
+
 ### Agents
+
+#### Agents Active
 ![Agents Active](screenshots/dashboard-wazuh-agent-active.png)
+
+#### Agent DVWA Active
 ![Agent DVWA Active](screenshots/dashboard-wazuh-agent-dvwa-active.png)
+
+#### Update Wazuh Agent
 ![Update Wazuh Agent](screenshots/update-wazuh-agent-windows.png)
 
+
 ### Sysmon
+
+#### Sysmon Windows Server
 ![Sysmon Windows Server](screenshots/config-sysmon-windows-server.png)
+
+#### Sysmon Windows Endpoint
 ![Sysmon Windows Endpoint](screenshots/config-sysmon-windows-endpoint.png)
 
+
 ### Alerts
+
+#### Login Failure Windows Server
 ![Login Failure Windows Server](screenshots/alert-login-failure-windows-server.png)
+
+#### Login Failure Windows Endpoint
 ![Login Failure Windows Endpoint](screenshots/alert-login-failure-windows-endpoint.png)
 
-### pfSense Log Forwarding
-![Remote Syslog Config](screenshots/pfsense-remote-syslog-config.png)
-![OSSEC Config](screenshots/konfigurasi-ossec.conf-log-forwarding-pfsense.png)
-![Filterlog Archives](screenshots/verifikasi-filterlog-archives.png)
 
+### pfSense Log Forwarding
+
+#### Remote Syslog Config
+![Remote Syslog Config](screenshots/pfsense-remote-syslog-config.png)
+
+#### OSSEC Config
+![OSSEC Config](screenshots/konfigurasi-ossec.conf-log-forwarding-pfsense.png)
+
+#### Filterlog Archives
+![Filterlog Archives](screenshots/verifikasi-filterlog-archives.png)

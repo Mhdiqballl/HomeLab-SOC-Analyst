@@ -70,49 +70,123 @@ VBoxManage modifyvm "pfSense-Firewall" --nic7 intnet --intnet7 "LabNet-ENDPOINT"
 ## Screenshot
 
 ### pfSense Configuration
+
+#### Pfsense Console
 ![Pfsense Console](screenshots/pfsense-console.png)
+
+#### VLAN Server Config
 ![VLAN Server Config](screenshots/pfsense-interface-server-config.png)
+
+#### ARP Table
 ![ARP Table](screenshots/pfsense-arp-table.png)
+
+#### Interface Assignments
 ![Interface Assignments](screenshots/pfsense-interface-assignments.png)
+
+#### Management Interface
 ![Management Interface](screenshots/pfsense-interface-mgmt-config.png)
+
+#### Server Interface
 ![Server Interface](screenshots/pfsense-interface-server-config.png)
+
+#### Endpoint Interface
 ![Endpoint Interface](screenshots/pfsense-interface-endpoint-config.png)
+
+#### DHCP Management
 ![DHCP Management](screenshots/pfsense-dhcp-mgmt.png)
+
+#### DHCP Server
 ![DHCP Server](screenshots/pfsense-dhcp-server.png)
+
+#### DHCP Endpoint
 ![DHCP Endpoint](screenshots/pfsense-dhcp-endpoint.png)
+
+#### Firewall Rules Management
 ![Firewall Rules Management](screenshots/pfsense-firewall-rules-mgmt.png)
+
+#### Firewall Rules Server
 ![Firewall Rules Server](screenshots/pfsense-firewall-rules-server.png)
+
+#### Firewall Rules Endpoint
 ![Firewall Rules Endpoint](screenshots/pfsense-firewall-rules-endpoint.png)
+
+#### Firewall Rules OPT1
 ![Firewall Rules OPT1](screenshots/pfsense-firewall-rules-opt1.png)
+
+#### VLAN List
 ![VLAN List](screenshots/pfsense-vlan-list.png)
 
+
 ### Windows Server (Active Directory)
+
+#### AD DS DNS Active
 ![AD DS DNS Active](screenshots/windows-server-adds-dns-active.png)
+
+#### Static IP Configuration
 ![Static IP Configuration](screenshots/ip-static-windows-server.png)
 
+
 ### Windows 11 Endpoint
+
+#### Static IP Configuration
 ![Static IP Configuration](screenshots/ip-static-windows-endpoint.png)
+
+#### Domain Login
 ![Domain Login](screenshots/windows-endpoint-login-domain.png)
 
+
 ### Ubuntu Server
+
+#### Static IP Configuration
 ![Static IP Configuration](screenshots/ip-static-ubuntu-wazuh.png)
+
+#### SSH Login
 ![SSH Login](screenshots/ubuntu-server-login-ssh.png)
 
+
 ### VirtualBox Configuration
+
+#### Host-Only Network Manager
 ![Host-Only Network Manager](screenshots/virtualbox-host-only-network-manager.png)
+
+#### pfSense Internal Network
 ![pfSense Internal Network](screenshots/virtualbox-network-settings-pfsense-2.png)
+
+#### pfSense Internal Network
 ![pfSense Internal Network](screenshots/virtualbox-network-settings-pfsense-3.png)
+
+#### Ubuntu Server Adapter 1
 ![Ubuntu Server Adapter 1](screenshots/ubuntu-server-adapter-1.png)
+
+#### Ubuntu Server Adapter 2
 ![Ubuntu Server Adapter 2](screenshots/ubuntu-server-adapter-2.png)
+
+#### Windows Endpoint
 ![Windows Endpoint](screenshots/windows-endpoint-adapter1.png)
+
+#### Windows Server
 ![Windows Server](screenshots/windows-server-adapter1.png)
+
+#### VBoxManage VM Modification
 ![VBoxManage VM Modification](screenshots/VBoxManage-modifyvm.png)
 
+
 ### Verifikasi Konektivitas
+
+#### Ubuntu Wazuh Connectivity
 ![Ubuntu Wazuh Connectivity](screenshots/verifikasi-konektivitas-ubuntu-wazuh.png)
+
+#### Windows Server Connectivity
 ![Windows Server Connectivity](screenshots/verifikasi-konektivitas-windows-server.png)
+
+#### Windows Endpoint Connectivity
 ![Windows Endpoint Connectivity](screenshots/verifikasi-konektivitas-windows-endpoint.png)
+
+#### Kali Linux Connectivity
 ![Kali Linux Connectivity](screenshots/verifikasi-konektivitas-kali-linux.png)
 
+
 ### Masalah: VLAN ID Tidak Muncul di Device Manager
+
+#### VLAN Device Manager Issue
 ![VLAN Device Manager Issue](screenshots/windows-server-error-vlan-id-device-manager.png)

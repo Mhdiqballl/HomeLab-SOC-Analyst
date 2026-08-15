@@ -129,6 +129,8 @@ Wazuh sebagai HIDS fokus pada aktivitas endpoint, bukan traffic jaringan. Perlu 
 ## Screenshot
 
 
+## Screenshot
+
 ## Case 1: Port Scanning
 
 #### Nmap Scan
@@ -137,54 +139,68 @@ Wazuh sebagai HIDS fokus pada aktivitas endpoint, bukan traffic jaringan. Perlu 
 #### pfSense Firewall Log
 ![pfSense Firewall Log](screenshots/tier1-case1-pfsense-filterlog.png)
 
+#### UFW Block
 ![UFW Block](screenshots/tier1-case1-ufw-block-wazuh-archives.png)
 
 
+## Case 2: Brute Force
 
-### Case 2: Brute Force
-
+#### Hydra Attack
 ![Hydra Attack](screenshots/tier1-case2-hydra-attack.png)
 
+#### Wazuh Alert
 ![Wazuh Alert](screenshots/tier1-case2-wazuh-alert.png)
 
 
-### Case 3: Exploitasi Windows
+## Case 3: Exploitasi Windows
 
+#### Metasploit Exploit
 ![Metasploit Exploit](screenshots/tier2-case3-metasploit-exploit.png)
 
+#### Wazuh Detection
 ![Wazuh Detection](screenshots/tier2-case3-wazuh-92031.png)
 
 
-### Case 4: Credential Dumping
+## Case 4: Credential Dumping
 
+#### Mimikatz Output
 ![Mimikatz Output](screenshots/tier2-case4-mimikatz-output.png)
 
+#### Sysmon Event 10
 ![Sysmon Event 10](screenshots/tier2-case4-sysmon-event10.png)
 
+#### Wazuh Level 12
 ![Wazuh Level 12](screenshots/tier2-case4-wazuh-rule.id-92900.png)
 
 
-### Case 5: Lateral Movement
+## Case 5: Lateral Movement
 
+#### WMI Command
 ![WMI Command](screenshots/tier2-case5-wmi-command.png)
 
-![Sysmon Event 1](screenshots/tier2-case5-sysmon-event1.png)
+#### Sysmon Event 1
+![Sysmon Event 1](screenshots/tier2-case5-wazuh-event1.png)
 
+#### Wazuh Detection
 ![Wazuh Detection](screenshots/tier2-case5-wazuh-92031.png)
 
 
+## Case 6: SQL Injection
 
-### Case 6: SQL Injection
-
+#### DVWA Setup
 ![DVWA Setup](screenshots/tier3-case6-dvwa-setup.png)
 
+#### SQLi Normal
 ![SQLi Normal](screenshots/tier3-case6-sqli-normal.png)
 
+#### SQLi Error
 ![SQLi Error](screenshots/tier3-case6-sqli-error.png)
 
+#### SQLi Dump
 ![SQLi Dump](screenshots/tier3-case6-sqli-dump.png)
 
+#### Apache Log
 ![Apache Log](screenshots/tier3-case6-apache-log.png)
 
+#### Wazuh Agent Alert
 ![Wazuh Agent Alert](screenshots/tier3-case6-wazuh-agent-alert.png)
-

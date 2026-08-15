@@ -59,9 +59,21 @@ Windows Defender dinonaktifkan, tidak ada LSA Protection, dan user menjalankan e
 - ✅ Incident Report tersedia di `incident-report.md`
 
 ## Screenshot
+
+#### TheHive Login
 ![TheHive Login](screenshots/thehive-login.png)
+
+#### TheHive User
 ![TheHive User](screenshots/thehive-user-management.png)
+
+#### TheHive Case
 ![TheHive Case](screenshots/thehive-case.png)
+
+#### TheHive Tasks
 ![TheHive Tasks](screenshots/thehive-tasks.png)
+
+#### TheHive IOC
 ![TheHive IOC](screenshots/thehive-ioc.png)
+
+#### Wazuh Proof
 ![Wazuh Proof](screenshots/wazuh-proof.png)

@@ -2,7 +2,7 @@
 
 Project homelab ini saya bangun sendiri dari nol sebagai sarana belajar dan pembuktian skill. Semua konfigurasi, troubleshooting, dan dokumentasi saya kerjakan mandiri mulai dari setup jaringan dengan VLAN, deploy SIEM Wazuh, mengirim log dari pfSense dan Windows, sampai simulasi serangan dan analisis detection-nya.
 
-\---
+---
 
 ## 👤 Tentang Saya
 
@@ -12,7 +12,7 @@ Saya adalah seorang **Network Engineer** yang sedang bertransisi ke bidang Cyber
 * Email: mhdibll17@gmail.com
 * No. HP : 08529236259
 
-\---
+---
 
 ## 🎯 Tujuan Project
 
@@ -22,14 +22,12 @@ Saya adalah seorang **Network Engineer** yang sedang bertransisi ke bidang Cyber
 * Melatih proses incident response dari triage sampai reporting
 * Menunjukkan kemampuan analisis dan dokumentasi teknis untuk persiapan melamar sebagai SOC Analyst
 
-\---
+---
 
 ## 🏗️ Arsitektur
 
 
-
-!\[Host-Only Network Manager](diagrams-architecture/network-architecture.png)
-
+![Network Architecture](diagrams-architecture/network-architecture.png)
 
 
 Ringkasan arsitektur:
@@ -41,14 +39,14 @@ Ringkasan arsitektur:
 * **SIEM**: Wazuh 4.14.6
 * **Case Management**: TheHive
 
-\---
+---
 
 ## 🛠️ Tools yang Digunakan
 
 |Kategori|Tools|
 |-|-|
 |Virtualisasi|VirtualBox|
-|Firewall \& Network|pfSense|
+|Firewall & Network|pfSense|
 |SIEM/XDR|Wazuh 4.14.6|
 |Endpoint Logging|Sysmon 15.21, Windows Event Log|
 |Simulasi Serangan|Kali Linux (Nmap, Hydra, Metasploit, Mimikatz)|
@@ -57,7 +55,7 @@ Ringkasan arsitektur:
 |Detection Rules|Sigma rules (planned)|
 |Framework Referensi|MITRE ATT\&CK|
 
-\---
+---
 
 ## 📂 Struktur Project
 
@@ -69,21 +67,21 @@ Ringkasan arsitektur:
 |[`04-incident-response`](./04-incident-response)|Case management, incident report|
 |[`diagrams-architecture`](./diagrams)|Diagram arsitektur jaringan|
 
-\---
+---
 
 ## 🚀 Progress / Roadmap
 
-* \[x] Setup infrastruktur dasar (VirtualBox, pfSense, VLAN, Active Directory)
-* \[x] Instalasi \& konfigurasi SIEM (Wazuh)
-* \[x] Log integration (Sysmon, Windows Event Log, pfSense firewall log)
-* \[x] Simulasi serangan Tier 1-3 (6 case MITRE ATT\&CK)
-* \[x] Incident response case study (TheHive + incident report)
-* \[ ] Suricata NIDS
-* \[ ] VirusTotal integration
-* \[ ] MISP Threat Intelligence
-* \[ ] Custom detection rules (Sigma)
+* [x] Setup infrastruktur dasar (VirtualBox, pfSense, VLAN, Active Directory)
+* [x] Instalasi \& konfigurasi SIEM (Wazuh)
+* [x] Log integration (Sysmon, Windows Event Log, pfSense firewall log)
+* [x] Simulasi serangan Tier 1-3 (6 case MITRE ATT\&CK)
+* [x] Incident response case study (TheHive + incident report)
+* [ ] Suricata NIDS
+* [ ] VirusTotal integration
+* [ ] MISP Threat Intelligence
+* [ ] Custom detection rules (Sigma)
 
-\---
+---
 
 ## 🔍 Highlight / Key Findings
 
@@ -98,7 +96,7 @@ Ringkasan arsitektur:
 * *Case 6 (SQLi): Manual exploitation berhasil (error 500 + dump users)*
 * *Incident Response: Case lengkap di TheHive + incident report formal*
 
-\---
+---
 
 ## 📌 Catatan
 

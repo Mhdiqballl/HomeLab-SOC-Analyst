@@ -26,7 +26,7 @@ Membangun SIEM (Security Information and Event Management) menggunakan Wazuh unt
 |----------|--------|
 | Wazuh Indexer | ✅ Running |
 | Wazuh Manager | ✅ Running |
-| Wazuh Dashboard | ✅ Running (HTTPS) |
+| Wazuh Dashboard | ✅ Running |
 | Agent Windows Server (ID 001) | ✅ Active |
 | Agent Windows 11 (ID 002) | ✅ Active |
 | Agent DVWA (ID 003) | ✅ Active |

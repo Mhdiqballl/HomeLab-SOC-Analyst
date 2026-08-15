@@ -131,8 +131,10 @@ Wazuh sebagai HIDS fokus pada aktivitas endpoint, bukan traffic jaringan. Perlu 
 
 ### Case 1: Port Scanning
 
+## Nmap Scan
 ![Nmap Scan](screenshots/tier1-case1-kali-nmap-scan-port.png)
 
+## pfSense Firewall Log
 ![pfSense Firewall Log](screenshots/tier1-case1-pfsense-filterlog.png)
 
 ![UFW Block](screenshots/tier1-case1-ufw-block-wazuh-archives.png)

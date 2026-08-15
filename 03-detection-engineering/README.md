@@ -19,31 +19,21 @@ Mensimulasikan berbagai teknik serangan berbasis MITRE ATT\&CK, kemudian mengana
 - Sysmon
 
 
-
 ## Cakupan
 
 Project ini mencakup Tier 1 sampai Tier 3 dari roadmap serangan \& deteksi.
 
 
-
 ## Ringkasan Case
 
-| Case | Teknik | MITRE ATT\&CK | Tools | Status |
-
-|------|--------|-------------|-------|--------|
-
+| Case | Teknik | MITRE ATT&CK | Tools | Status |
+|------|--------|---------------|-------|--------|
 | 1 | Port Scanning | T1046 | Nmap | ✅ Done |
-
 | 2 | Brute Force | T1110 | Hydra | ✅ Done |
-
 | 3 | Exploitasi Windows Service | T1210 | Metasploit | ✅ Done |
-
 | 4 | Credential Dumping | T1003 | Mimikatz | ✅ Done |
-
 | 5 | Lateral Movement | T1021 | WMI | ✅ Done |
-
 | 6 | SQL Injection | T1190 | Manual | ✅ Done |
-
 
 ---
 
@@ -57,7 +47,6 @@ Project ini mencakup Tier 1 sampai Tier 3 dari roadmap serangan \& deteksi.
 **Target:** Windows 11 (192.168.30.10)
 
 
-
 ### Langkah Serangan
 
 1. `nmap -sn 192.168.30.0/24` — discovery scan
@@ -67,28 +56,20 @@ Project ini mencakup Tier 1 sampai Tier 3 dari roadmap serangan \& deteksi.
 3. Hasil: 3 port terbuka (135, 139, 445)
 
 
-
 ### Deteksi
 
 | Layer | Status | Keterangan |
-
 |-------|--------|------------|
-
 | Wazuh | ❌ Tidak mendeteksi | Tidak ada built-in rule untuk network scan |
-
 | pfSense Firewall Log | ✅ Tercatat | Traffic ICMP/TCP SYN dari Kali |
-
 | UFW Block Ubuntu | ✅ Tercatat | Upaya koneksi diblokir |
-
 
 
 ### Analisis
 
 Wazuh sebagai HIDS fokus pada aktivitas endpoint, bukan traffic jaringan. Perlu custom rule untuk deteksi port scanning.
 
-
 ---
-
 
 ## Case 2: Brute Force Authentication
 
@@ -97,7 +78,6 @@ Wazuh sebagai HIDS fokus pada aktivitas endpoint, bukan traffic jaringan. Perlu 
 **Tools:** Hydra (Kali Linux)  
 
 **Target:** Ubuntu-Wazuh (192.168.20.30)
-
 
 
 ### Langkah Serangan
@@ -113,18 +93,11 @@ Wazuh sebagai HIDS fokus pada aktivitas endpoint, bukan traffic jaringan. Perlu 
 ### Deteksi
 
 | Layer | Status | Keterangan |
-
 |-------|--------|------------|
-
-| Wazuh Rule 5760 | ✅ Terdeteksi | sshd authentication failed |
-
-| Journal SSH Ubuntu | ✅ Tercatat | 10 failed password attempt |
-
-
+| Wazuh Rule 92031 | ✅ Terdeteksi | Discovery activity executed |
+| pfSense | ✅ Tercatat | Traffic SMB port 445 |
 
 ---
-
-
 
 ## Case 3: Exploitasi Windows Service
 
@@ -133,7 +106,6 @@ Wazuh sebagai HIDS fokus pada aktivitas endpoint, bukan traffic jaringan. Perlu 
 **Tools:** Metasploit (Kali Linux)  
 
 **Target:** Windows 11 (192.168.30.10)
-
 
 
 ### Langkah Serangan
@@ -145,20 +117,14 @@ Wazuh sebagai HIDS fokus pada aktivitas endpoint, bukan traffic jaringan. Perlu 
 3. NTLMv2 hash Administrator tertangkap
 
 
-
 ### Deteksi
 
 | Layer | Status | Keterangan |
-
 |-------|--------|------------|
-
-| Wazuh Rule 92031 | ✅ Terdeteksi | Discovery activity executed |
-
-| pfSense | ✅ Tercatat | Traffic SMB port 445 |
-
+| Wazuh Rule 5760 | ✅ Terdeteksi | sshd authentication failed |
+| Journal SSH Ubuntu | ✅ Tercatat | 10 failed password attempt |
 
 ---
-
 
 ## Screenshot
 
@@ -167,7 +133,7 @@ Wazuh sebagai HIDS fokus pada aktivitas endpoint, bukan traffic jaringan. Perlu 
 
 ![Nmap Scan](screenshots/tier1-case1-kali-nmap-scan-port.png)
 
-![pfSense Firewall Log](screenshots/tier1-case1-pfsense-filter-log.png)
+![pfSense Firewall Log](screenshots/tier1-case1-pfsense-filterlog.png)
 
 ![UFW Block](screenshots/tier1-case1-ufw-block-wazuh-archives.png)
 

@@ -139,5 +139,5 @@ Pada 7 Agustus 2026 pukul 00:07 UTC, Wazuh mendeteksi aktivitas mencurigakan di 
 
 **Date:** August 15, 2026
 
-**Classification:** Internal
+**Classification:** Internal```
 

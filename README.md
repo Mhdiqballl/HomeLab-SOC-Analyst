@@ -1,4 +1,4 @@
-# HomeLab SOC Analyst
+# HomeLab SOC Analyst	
 
 Project homelab ini saya bangun sendiri dari nol sebagai sarana belajar dan pembuktian skill. Semua konfigurasi, troubleshooting, dan dokumentasi saya kerjakan mandiri mulai dari setup jaringan dengan VLAN, deploy SIEM Wazuh, mengirim log dari pfSense dan Windows, sampai simulasi serangan dan analisis detection-nya.
 

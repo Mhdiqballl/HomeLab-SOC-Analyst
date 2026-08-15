@@ -1,38 +1,25 @@
-\# Incident Report: Credential Dumping via Mimikatz
+```
+# Incident Report: Credential Dumping via Mimikatz
 
+**Incident ID:** IR-2026-001
 
+**Severity:** Critical (Level 12)
 
-\*\*Incident ID:\*\* IR-2026-001
+**Status:** Resolved
 
-\*\*Severity:\*\* Critical (Level 12)
+**Date:** August 7, 2026
 
-\*\*Status:\*\* Resolved
+**Analyst:** Muhammad Iqbal
 
-\*\*Date:\*\* August 7, 2026
+---
 
-\*\*Analyst:\*\* Muhammad Iqbal
-
-
-
-\---
-
-
-
-\## Executive Summary
-
-
+## Executive Summary
 
 Pada 7 Agustus 2026 pukul 00:07 UTC, Wazuh mendeteksi aktivitas mencurigakan di Windows Server (WIN-IQBGMC8820T). Proses `mimikatz.exe` terdeteksi mengakses `lsass.exe`, yang merupakan indikasi Credential Dumping (MITRE ATT\&CK T1003). Investigasi mengkonfirmasi bahwa tool Mimikatz berhasil mengekstrak NTLM hash kredensial Administrator.
 
+---
 
-
-\---
-
-
-
-\## Timeline
-
-
+## Timeline
 
 | Waktu (UTC) | Kejadian | Sumber |
 
@@ -48,21 +35,15 @@ Pada 7 Agustus 2026 pukul 00:07 UTC, Wazuh mendeteksi aktivitas mencurigakan di 
 
 | 00:08:54 | Wazuh trigger alert Rule 92900 Level 12 | Wazuh Dashboard |
 
+---
 
-
-\---
-
-
-
-\## Indicator of Compromise (IOC)
-
-
+## Indicator of Compromise (IOC)
 
 | Tipe | Nilai | Deskripsi |
 
 |------|-------|-----------|
 
-| File | `C:\\Users\\Administrator\\Desktop\\mimikatz.exe` | Tool credential dumping |
+| File | `C:\Users\Administrator\Desktop\mimikatz.exe` | Tool credential dumping |
 
 | Hash NTLM | `af96405e0271c2fc308be85d9e487f7c` | Hash Administrator yang dicuri |
 
@@ -72,49 +53,33 @@ Pada 7 Agustus 2026 pukul 00:07 UTC, Wazuh mendeteksi aktivitas mencurigakan di 
 
 | IP Target | `192.168.20.10` | Windows Server terdampak |
 
+---
 
-
-\---
-
-
-
-\## Impact Assessment
+## Impact Assessment
 
 
 
-\- \*\*Kredensial terdampak:\*\* Administrator domain
+- **Kredensial terdampak:** Administrator domain
 
-\- \*\*Sistem terdampak:\*\* Windows Server (192.168.20.10)
+- **Sistem terdampak:** Windows Server (192.168.20.10)
 
-\- \*\*Potensi lanjutan:\*\* Lateral movement ke endpoint lain, akses ke Domain Controller
+- **Potensi lanjutan:** Lateral movement ke endpoint lain, akses ke Domain Controller
 
-\- \*\*Data yang dicuri:\*\* NTLM hash, Kerberos ticket
+- **Data yang dicuri:** NTLM hash, Kerberos ticket
 
+---
 
+## Root Cause Analysis
 
-\---
+1. Windows Defender dinonaktifkan — memungkinkan Mimikatz berjalan tanpa deteksi
 
+2. Tidak ada LSA Protection — `lsass.exe` dapat diakses oleh proses non-system
 
+3. User menjalankan executable tidak dikenal dari Desktop dengan hak Administrator
 
-\## Root Cause Analysis
+---
 
-
-
-1\. Windows Defender dinonaktifkan — memungkinkan Mimikatz berjalan tanpa deteksi
-
-2\. Tidak ada LSA Protection — `lsass.exe` dapat diakses oleh proses non-system
-
-3\. User menjalankan executable tidak dikenal dari Desktop dengan hak Administrator
-
-
-
-\---
-
-
-
-\## Containment \& Eradication
-
-
+## Containment & Eradication
 
 | Tindakan | Status |
 
@@ -130,15 +95,9 @@ Pada 7 Agustus 2026 pukul 00:07 UTC, Wazuh mendeteksi aktivitas mencurigakan di 
 
 | Enable LSA Protection via registry | ✅ Done |
 
+---
 
-
-\---
-
-
-
-\## Detection Coverage
-
-
+## Detection Coverage
 
 | Layer | Status | Keterangan |
 
@@ -150,51 +109,35 @@ Pada 7 Agustus 2026 pukul 00:07 UTC, Wazuh mendeteksi aktivitas mencurigakan di 
 
 | Windows Defender | ❌ Bypassed | Dimatikan sebelum eksekusi |
 
+---
 
+## Recommendations
 
-\---
+1. Enable Attack Surface Reduction (ASR) rules — block executable dari folder Desktop/Downloads
 
+2. Implement LSA Protection — cegah akses ke `lsass.exe`
 
+3. Audit privileged account usage — pantau setiap penggunaan akun Administrator
 
-\## Recommendations
+4. Deploy application whitelisting — hanya izinkan aplikasi yang disetujui
 
+5. Konfigurasi alert Defender — kirim ke Wazuh untuk deteksi berlapis
 
+---
 
-1\. Enable Attack Surface Reduction (ASR) rules — block executable dari folder Desktop/Downloads
+## Appendix
 
-2\. Implement LSA Protection — cegah akses ke `lsass.exe`
+- **Screenshot Sysmon:** `tier2-case4-sysmon-event10.png`
 
-3\. Audit privileged account usage — pantau setiap penggunaan akun Administrator
+- **Screenshot Wazuh:** `tier2-case4-wazuh-rule.id-92900.png`
 
-4\. Deploy application whitelisting — hanya izinkan aplikasi yang disetujui
+- **Screenshot Mimikatz:** `tier2-case4-mimikatz-output.png`
 
-5\. Konfigurasi alert Defender — kirim ke Wazuh untuk deteksi berlapis
+---
 
+**Report prepared by:** Muhammad Iqbal
 
+**Date:** August 15, 2026
 
-\---
-
-
-
-\## Appendix
-
-
-
-\- \*\*Screenshot Sysmon:\*\* `tier2-case4-sysmon-event10.png`
-
-\- \*\*Screenshot Wazuh:\*\* `tier2-case4-wazuh-rule.id-92900.png`
-
-\- \*\*Screenshot Mimikatz:\*\* `tier2-case4-mimikatz-output.png`
-
-
-
-\---
-
-
-
-\*\*Report prepared by:\*\* Muhammad Iqbal
-
-\*\*Date:\*\* August 15, 2026
-
-\*\*Classification:\*\* Internal
+**Classification:** Internal
 

@@ -71,52 +71,27 @@ Contoh potongan data hasil parsing yang berhasil (dari `archives.json`):
 
 ## Screenshot
 
+### Instalasi Wazuh
+![Log Instalasi Berhasil](screenshots/wazuh-installation-done.png)
+![Dashboard Login](screenshots/wazuh-dashboard-first-login.png)
 
+### Agents
+![Agents Active](screenshots/dashboard-wazuh-agent-active.png)
+![Agent DVWA Active](screenshots/dashboard-wazuh-agent-dvwa-active.png)
+![Update Wazuh Agent](screenshots/update-wazuh-agent-windows.png)
 
-\### Instalasi Wazuh
+### Sysmon
+![Sysmon Windows Server](screenshots/config-sysmon-windows-server.png)
+![Sysmon Windows Endpoint](screenshots/config-sysmon-windows-endpoint.png)
 
-!\[Log Instalasi Berhasil](screenshots/wazuh-installation-done.png)
+### Alerts
+![Login Failure Windows Server](screenshots/alert-login-failure-windows-server.png)
+![Login Failure Windows Endpoint](screenshots/alert-login-failure-windows-endpoint.png)
 
-!\[Dashboard Login](screenshots/wazuh-dashboard-first-login.png)
-
-
-
-\### Agents
-
-!\[Agents Active](screenshots/dashboard-wazuh-agent-active.png)
-
-!\[Agent DVWA Active](screenshots/dashboard-wazuh-agent-dvwa-active.png)
-
-!\[Update Wazuh Agent](screenshots/update-wazuh-agent-windows.png)
-
-
-
-\### Sysmon
-
-!\[Sysmon Windows Server](screenshots/config-sysmon-windows-server.png)
-
-!\[Sysmon Windows Endpoint](screenshots/config-sysmon-windows-endpoint.png)
-
-
-
-\### Alerts
-
-!\[Login Failure Windows Server](screenshots/alert-login-failure-windows-server.png)
-
-!\[Login Failure Windows Endpoint](screenshots/alert-login-failure-windows-endpoint.png)
-
-
-
-\### pfSense Log Forwarding
-
-!\[Remote Syslog Config](screenshots/pfsense-remote-syslog-config.png)
-
-!\[OSSEC Config](screenshots/konfigurasi-ossec.conf-log-forwarding-pfsense.png)
-
-!\[Filterlog Archives](screenshots/pfsense-filterlog-archives.png)
-
-
-
+### pfSense Log Forwarding
+![Remote Syslog Config](screenshots/pfsense-remote-syslog-config.png)
+![OSSEC Config](screenshots/konfigurasi-ossec.conf-log-forwarding-pfsense.png)
+![Filterlog Archives](screenshots/pfsense-filterlog-archives.png)
 
 
 ### Konfigurasi Network Ubuntu (netplan)

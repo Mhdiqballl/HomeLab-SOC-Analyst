@@ -63,7 +63,7 @@ Ringkasan arsitektur:
 |[`02-siem-wazuh`](./02-siem-wazuh)|Instalasi \& konfigurasi Wazuh, log source integration|
 |[`03-detection-engineering`](./03-detection-engineering)|Simulasi serangan, mapping MITRE ATT\&CK|
 |[`04-incident-response`](./04-incident-response)|Case management, incident report|
-|[`diagrams`](./diagrams)|Diagram arsitektur jaringan|
+|[`diagrams-architecture`](./diagrams)|Diagram arsitektur jaringan|
 
 \---
 

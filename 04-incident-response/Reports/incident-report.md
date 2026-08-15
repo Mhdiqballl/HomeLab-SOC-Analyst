@@ -1,9 +1,13 @@
 # Incident Report: Credential Dumping via Mimikatz
 
 **Incident ID:** `IR-2026-001`
+
 **Severity:** 🔴 **Critical (Level 12)**
+
 **Status:** 🟢 **Resolved**
+
 **Date:** August 7, 2026
+
 **Analyst:** Muhammad Iqbal
 
 ---

@@ -1,6 +1,6 @@
 # HomeLab SOC Analyst
 
-Project homelab ini saya bangun sendiri dari nol sebagai sarana belajar dan pembuktian skill. Semua konfigurasi, troubleshooting, dan dokumentasi saya kerjakan mandiri — mulai dari setup jaringan dengan VLAN, deploy SIEM Wazuh, mengirim log dari pfSense dan Windows, sampai simulasi serangan dan analisis detection-nya.
+Project homelab ini saya bangun sendiri dari nol sebagai sarana belajar dan pembuktian skill. Semua konfigurasi, troubleshooting, dan dokumentasi saya kerjakan mandiri mulai dari setup jaringan dengan VLAN, deploy SIEM Wazuh, mengirim log dari pfSense dan Windows, sampai simulasi serangan dan analisis detection-nya.
 
 \---
 
@@ -28,15 +28,13 @@ Saya adalah seorang **Network Engineer** yang sedang bertransisi ke bidang Cyber
 
 !\[Network Architecture](diagrams/network-architecture.png)
 
-*(Ganti gambar di atas dengan diagram arsitektur homelab kamu — bisa dibuat di draw.io)*
-
 Ringkasan arsitektur:
 
-* **Firewall/Router**: pfSense/OPNsense dengan segmentasi VLAN (Management, Server, Endpoint)
+* **Firewall/Router**: pfSense dengan segmentasi VLAN (Management, Server, Endpoint)
 * **Domain**: Windows Server + Active Directory
 * **Endpoint**: Windows 10/11, Ubuntu Server
 * **Attacker Machine**: Kali Linux
-* **SIEM**: Wazuh
+* **SIEM**: Wazuh 4.14.6
 * **Case Management**: TheHive
 
 \---
@@ -46,13 +44,13 @@ Ringkasan arsitektur:
 |Kategori|Tools|
 |-|-|
 |Virtualisasi|VirtualBox|
-|Firewall \& Network|pfSense / OPNsense|
-|SIEM/XDR|Wazuh|
-|Endpoint Logging|Sysmon, Windows Event Log, auditd|
-|Simulasi Serangan|Kali Linux, Atomic Red Team|
+|Firewall \& Network|pfSense|
+|SIEM/XDR|Wazuh 4.14.6|
+|Endpoint Logging|Sysmon 15.21, Windows Event Log|
+|Simulasi Serangan|Kali Linux (Nmap, Hydra, Metasploit, Mimikatz)|
 |Case Management/IR|TheHive|
-|Threat Intelligence|MISP|
-|Detection Rules|Sigma rules|
+|Threat Intelligence|MISP (planned)|
+|Detection Rules|Sigma rules (planned)|
 |Framework Referensi|MITRE ATT\&CK|
 
 \---
@@ -61,36 +59,44 @@ Ringkasan arsitektur:
 
 |Folder|Deskripsi|
 |-|-|
-|[`01-network-setup`](./01-network-setup)|Setup jaringan, VLAN, firewall rules|
+|[`01-network-setup`](./01-network-setup)|etup jaringan, VLAN, firewall rules, Active Directory|
 |[`02-siem-wazuh`](./02-siem-wazuh)|Instalasi \& konfigurasi Wazuh, log source integration|
-|[`03-detection-engineering`](./03-detection-engineering)|Simulasi serangan, mapping MITRE ATT\&CK, custom detection rules|
-|[`04-incident-response`](./04-incident-response)|Case management, contoh incident report|
+|[`03-detection-engineering`](./03-detection-engineering)|Simulasi serangan, mapping MITRE ATT\&CK|
+|[`04-incident-response`](./04-incident-response)|Case management, incident report|
 |[`diagrams`](./diagrams)|Diagram arsitektur jaringan|
 
 \---
 
 ## 🚀 Progress / Roadmap
 
-* \[x] Setup infrastruktur dasar (VirtualBox, jaringan)
-* \[ ] Instalasi \& konfigurasi SIEM (Wazuh)
-* \[ ] Log integration (Sysmon, Windows Event Log, firewall log)
-* \[ ] Simulasi serangan \& detection engineering
-* \[ ] Incident response case study
-* \[ ] Threat hunting
+* \[x] Setup infrastruktur dasar (VirtualBox, pfSense, VLAN, Active Directory)
+* \[x] Instalasi \& konfigurasi SIEM (Wazuh)
+* \[x] Log integration (Sysmon, Windows Event Log, pfSense firewall log)
+* \[x] Simulasi serangan Tier 1-3 (6 case MITRE ATT\&CK)
+* \[x] Incident response case study (TheHive + incident report)
+* \[ ] Suricata NIDS
+* \[ ] VirusTotal integration
+* \[ ] MISP Threat Intelligence
+* \[ ] Custom detection rules (Sigma)
 
 \---
 
 ## 🔍 Highlight / Key Findings
 
-*(Bagian ini diisi setelah project berjalan — contoh cara menulisnya:)*
-
-* Berhasil mendeteksi teknik **T1110 (Brute Force)** menggunakan custom rule di Wazuh
-* Membuat 3 Sigma rule untuk deteksi lateral movement di lingkungan Active Directory
-* Menyelesaikan simulasi insiden end-to-end dari alert hingga incident report
+* *Troubleshooting VLAN: Driver VirtualBox tidak mendukung VLAN tagging → diatasi dengan Internal Network terpisah via VBoxManage CLI*
+* *pfSense Log Forwarding: Debugging dari tcpdump 0 packets → menemukan pengecualian `!filterlog` di pfSense.conf → berhasil mengirim firewall log ke Wazuh archives*
+* *Wazuh Instalasi: Mengalami disk penuh, indexer timeout, SSL error → teratasi dengan resize LVM, turunkan heap Java, reinstall bersih*
+* *Case 1 (Nmap): Wazuh tidak mendeteksi port scan → temuan penting bahwa HIDS butuh custom rule untuk network detection*
+* *Case 2 (Hydra): Default rule Wazuh (5760) berhasil mendeteksi brute force SSH*
+* *Case 3 (Metasploit): EternalBlue gagal (target patched) → SMB Delivery berhasil menangkap NTLMv2 hash*
+* *Case 4 (Mimikatz): Terdeteksi sempurna oleh Sysmon (Event ID 10) + Wazuh (Rule 92900 Level 12)*
+* *Case 5 (WMI): Lateral movement terdeteksi Sysmon + Wazuh*
+* *Case 6 (SQLi): Manual exploitation berhasil (error 500 + dump users)*
+* *Incident Response: Case lengkap di TheHive + incident report formal*
 
 \---
 
 ## 📌 Catatan
 
-Seluruh konfigurasi, IP address, dan kredensial pada dokumentasi ini telah disamarkan (sanitized) untuk keperluan publikasi. Project ini dibangun murni untuk tujuan pembelajaran di lingkungan lab yang terisolasi.
+Seluruh konfigurasi, IP address, dan kredensial pada dokumentasi ini telah disamarkan untuk keperluan publikasi. Project ini dibangun murni untuk tujuan pembelajaran di lingkungan lab yang terisolasi.
 

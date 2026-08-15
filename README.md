@@ -26,7 +26,11 @@ Saya adalah seorang **Network Engineer** yang sedang bertransisi ke bidang Cyber
 
 ## 🏗️ Arsitektur
 
-!\[Network Architecture](diagrams-architecture/network-architecture.png)
+
+
+!\[Host-Only Network Manager](diagrams-architecture/network-architecture.png)
+
+
 
 Ringkasan arsitektur:
 

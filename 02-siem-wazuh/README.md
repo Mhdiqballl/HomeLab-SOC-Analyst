@@ -80,12 +80,15 @@ Membangun SIEM (Security Information and Event Management) menggunakan Wazuh unt
   <protocol>udp</protocol>
   <allowed-ips>192.168.20.1</allowed-ips>
 </remote>
+```
 
 ### Konfigurasi Wazuh (`ossec.conf`)
 
-```<address>192.168.20.30</address>```
+```<address>192.168.20.30</address>
+```
 
-Contoh Data pfSense (dari `archives.json`):
+
+### Contoh Data pfSense (dari `archives.json`):
 
 ```json
 {

@@ -1,118 +1,107 @@
-# Fase 1: Network Setup
+# Fase 2: SIEM Wazuh
 
 ## Tujuan
-Membangun fondasi jaringan homelab dengan pfSense sebagai firewall/router, 
-segmentasi VLAN (Management, Server, Endpoint), dan Windows Server sebagai 
-Domain Controller.
+
+Membangun SIEM (Security Information and Event Management) menggunakan Wazuh untuk mengumpulkan, menganalisis, dan mendeteksi ancaman dari seluruh endpoint di jaringan lab.
 
 ## Tools yang Digunakan
-- VirtualBox 7.2.12 r174389
-- pfSense CE 2.8.1
-- Windows Server 2022
-- Windows 11
-- Ubuntu 22.04 Server
-- Kali Linux 2026.2
+
+* Wazuh 4.14 (Indexer, Server/Manager, Dashboard — metode all-in-one)
+* Ubuntu Server 22.04 LTS
+* Sysmon (Windows endpoint logging)
 
 ## Langkah yang Dilakukan
-1. Install pfSense sebagai virtual firewall/router
-2. Konfigurasi interface WAN, LAN, dan Host-only Adapter (OPT1) untuk akses GUI dari host
-3. Buat 3 VLAN: Management (10), Server (20), Endpoint (30)
-4. Assign VLAN jadi interface aktif dengan IP static masing-masing
-5. Setup DHCP server untuk tiap VLAN
-6. Install Windows Server 2022, promosikan jadi Active Directory Domain Controller
-7. Join Windows 11 endpoint ke domain HOMELAB.local
-8. Tambah adapter Internal Network terpisah via VBoxManage CLI (karena keterbatasan UI VirtualBox)
-9. Pindahkan semua VM ke Internal Network sesuai VLAN
-10. Set static IP di setiap VM sesuai subnet VLAN
 
-## Skema IP Final (Setelah VLAN)
-| Interface | IP | DHCP Range |
-|---|---|---|
-| LAN | 192.168.1.1/24 | - |
-| MGMT (VLAN 10) | 192.168.10.1/24 | .100-.200 |
-| SERVER (VLAN 20) | 192.168.20.1/24 | .100-.200 |
-| ENDPOINT (VLAN 30) | 192.168.30.1/24 | .100-.200 |
+1. Update sistem Ubuntu, konfigurasi static IP dan DNS
+2. Pre-check port 443/80 sebelum instalasi
+3. Download dan jalankan installer Wazuh (`wazuh-install.sh -a`)
+4. Verifikasi akses dashboard dan catat kredensial admin
+5. Buka port firewall (UFW) untuk komunikasi agent
+6. Install Wazuh Agent di Windows Server dan Windows 10/11
+7. Install Sysmon di kedua endpoint Windows, hubungkan log ke Wazuh Agent
+8. Verifikasi semua agent berstatus Active di dashboard
 
-## Pembagian VM per VLAN
-| VM | VLAN | IP |
-|----|------|----|
-| Kali Linux | MGMT (10) | 192.168.10.100 (DHCP) |
-| Windows Server AD | SERVER (20) | 192.168.20.10 |
-| Ubuntu-Wazuh | SERVER (20) | 192.168.20.30 |
-| Windows 11 | ENDPOINT (30) | 192.168.30.10 |
+## Kendala yang Ditemui (Bagian Penting — Proses Troubleshooting)
 
-## Troubleshooting VLAN
-### Masalah: VLAN ID Tidak Muncul di Device Manager
-Driver virtual Intel PRO/1000 MT di VirtualBox tidak mendukung VLAN tagging secara penuh.
-Opsi "Priority & VLAN" hanya mengaktifkan fitur VLAN, tetapi tidak menyediakan field untuk
-memasukkan VLAN ID (10, 20, 30).
+Proses instalasi Wazuh mengalami beberapa kegagalan berurutan sebelum berhasil, didokumentasikan sebagai bukti proses debugging nyata:
 
-### Solusi: Internal Network Terpisah via VBoxManage CLI
-VBoxManage modifyvm "pfSense-Firewall" --nic5 intnet --intnet5 "LabNet-MGMT"
-VBoxManage modifyvm "pfSense-Firewall" --nic6 intnet --intnet6 "LabNet-SERVER"
-VBoxManage modifyvm "pfSense-Firewall" --nic7 intnet --intnet7 "LabNet-ENDPOINT"
+1. **Percobaan di Ubuntu 26.04**: instalasi Wazuh Dashboard gagal (`ERROR: Wazuh dashboard installation failed`). Setelah riset, ditemukan Ubuntu 26.04 belum masuk daftar OS resmi yang didukung Wazuh 4.14.
+2. **Riset kompatibilitas OS**: dokumentasi resmi Wazuh dan laporan bug komunitas (termasuk kasus serupa di Ubuntu 24.04 fresh install) mengarahkan ke kesimpulan bahwa **Ubuntu 22.04 LTS** adalah pilihan paling stabil karena paling matang diuji.
+3. **Percobaan di Ubuntu 22.04**: Wazuh Indexer gagal start dengan error `timeout was exceeded` setelah proses hang selama ±25 menit tanpa pesan error yang jelas di log.
+4. **Diagnosis**: dicek `vm.max\_map\_count` (sudah sesuai standar `262144`), RAM, dan disk space — mengarah pada dugaan resource CPU/RAM VM kurang untuk proses bootstrap OpenSearch yang berat.
+5. **Solusi yang diterapkan**: menaikkan RAM VM, extend timeout systemd (`TimeoutStartSec`), dan mematikan VM lain saat instalasi supaya resource laptop fokus ke satu proses.
+
+### Troubleshooting Log Forwarding pfSense → Wazuh
+
+Setelah Wazuh Server, Agent, dan Sysmon berhasil berjalan normal, muncul kendala baru: log firewall pfSense yang diteruskan lewat syslog **tidak muncul sebagai alert** di dashboard, meskipun konfigurasi terlihat benar. Proses debugging-nya:
+
+1. **Cek konektivitas dasar**: `tcpdump` di sisi Ubuntu awalnya menunjukkan **0 packets captured** di port 514 — artinya pfSense belum benar-benar mengirim data apapun.
+2. **Cek isi file log pfSense di Ubuntu**: ternyata hanya berisi log sistem biasa (ntpd, cron), tidak ada event firewall (`filterlog`) sama sekali.
+3. **Ditemukan akar masalah #1**: rule firewall pfSense (**"Default allow LAN to any rule"**) defaultnya **tidak mencentang opsi "Log packets that are handled by this rule"** — pfSense tidak otomatis mencatat traffic yang lewat kecuali logging diaktifkan manual per-rule.
+4. **Setelah logging diaktifkan**: log `filterlog` mulai muncul dengan format lengkap dan berhasil di-decode oleh decoder bawaan Wazuh (`0455-pfsense\_decoders.xml`) — field seperti `srcip`, `dstip`, `protocol`, `action` berhasil ter-parsing dengan benar (dikonfirmasi lewat `archives.json` setelah `logall\_json` diaktifkan).
+5. **Tetap tidak muncul di dashboard sebagai alert**: investigasi ke rule bawaan Wazuh (`0540-pfsense\_rules.xml`) mengungkap penyebabnya — rule `87701` (pfSense firewall drop event) memang sengaja diberi `<options>no\_log</options>` oleh Wazuh, supaya setiap single block event tidak membanjiri dashboard dengan noise.
+6. **Solusi**: ditemukan rule `87702` yang levelnya lebih tinggi (level 10) dan **tidak** di-suppress — trigger ketika ada **≥18 block event dalam 45 detik dari sumber IP yang sama** (MITRE ATT\&CK T1110 - Brute Force). Dengan generate traffic block berulang dalam waktu singkat, alert ini berhasil muncul di dashboard.
+
+**Pembelajaran**: ini mengajarkan cara kerja nyata SIEM tuning — tidak semua log yang berhasil di-parse otomatis jadi alert; ada logika threshold dan suppression yang disengaja untuk mengurangi alert fatigue, dan kemampuan membaca ruleset (`decoders`/`rules` XML) untuk mendiagnosis kenapa sebuah event tidak muncul adalah skill inti SOC/detection engineering.
+
+Contoh potongan data hasil parsing yang berhasil (dari `archives.json`):
+
+```json
+{
+  "predecoder": {
+    "program\_name": "filterlog",
+    "hostname": "pfsense.home.arpa"
+  },
+  "decoder": { "name": "pf" },
+  "data": {
+    "protocol": "udp",
+    "action": "pass",
+    "srcip": "192.168.1.20",
+    "srcport": "49957",
+    "dstip": "8.8.8.8",
+    "dstport": "53"
+  },
+  "location": "/var/log/pfSense.log"
+}
+```
 
 ## Hasil
-- MGMT (VLAN 10) → LabNet-MGMT (em3)
-- SERVER (VLAN 20) → LabNet-SERVER (em4)  
-- ENDPOINT (VLAN 30) → LabNet-ENDPOINT (em5)
 
-## Kendala yang Ditemui
-- Instalasi pfSense sempat lambat/stuck karena resource laptop, diatasi dengan Machine Reset
-- Firewall OPT1 awalnya memblokir semua traffic, diatasi dengan menambah firewall rule Allow All
-- VLAN ID tidak tersedia di driver VirtualBox, diatasi dengan Internal Network terpisah via CLI
-
-## Hasil Akhir
-- ✅ Jaringan lab dengan 3 VLAN tersegmentasi dan Domain Controller aktif
-- ✅ Semua VM dapat berkomunikasi lintas VLAN melalui pfSense
-- ✅ DHCP berfungsi di setiap VLAN
+*(isi setelah Wazuh berhasil terinstall dan agent aktif)*
 
 ## Screenshot
 
-### pfSense Configuration
-![Pfsense Console](screenshots/pfsense-console.png)
-![VLAN Server Config](screenshots/pfsense-interface-server-config.png)
-![ARP Table](screenshots/pfsense-arp-table.png)
-![Interface Assignments](screenshots/pfsense-interface-assignments.png)
-![Management Interface](screenshots/pfsense-interface-mgmt-config.png)
-![Server Interface](screenshots/pfsense-interface-server-config.png)
-![Endpoint Interface](screenshots/pfsense-interface-endpoint-config.png)
-![DHCP Management](screenshots/pfsense-dhcp-mgmt.png)
-![DHCP Server](screenshots/pfsense-dhcp-server.png)
-![DHCP Endpoint](screenshots/pfsense-dhcp-endpoint.png)
-![Firewall Rules Management](screenshots/pfsense-firewall-rules-mgmt.png)
-![Firewall Rules Server](screenshots/pfsense-firewall-rules-server.png)
-![Firewall Rules Endpoint](screenshots/pfsense-firewall-rules-endpoint.png)
-![Firewall Rules OPT1](screenshots/pfsense-firewall-rules-opt1.png)
-![VLAN List](screenshots/pfsense-vlan-list.png)
+### Instalasi Wazuh
 
-### Windows Server (Active Directory)
-![AD DS DNS Active](screenshots/windows-server-adds-dns-active.png)
-![Static IP Configuration](screenshots/ip-static-windows-server.png)
+!\[Log Instalasi Berhasil](screenshots/wazuh-install-success.png)
+!\[Dashboard Login](screenshots/wazuh-dashboard-login.png)
 
-### Windows 11 Endpoint
-![Static IP Configuration](screenshots/ip-static-windows-endpoint.png)
-![Domain Login](screenshots/windows-endpoint-login-domain.png)
+### Agents
 
-### Ubuntu Server
-![Static IP Configuration](screenshots/ip-static-ubuntu-wazuh.png)
-![SSH Login](screenshots/ubuntu-server-login-ssh.png)
+!\[Agents Active](screenshots/wazuh-agents-active.png)
 
-### VirtualBox Configuration
-![Host-Only Network Manager](screenshots/virtualbox-host-only-network-manager.png)
-![pfSense Internal Network](screenshots/virtualbox-network-settings-pfsense-2.png)
-![pfSense Internal Network](screenshots/virtualbox-network-settings-pfsense-3.png)
-![Ubuntu Server Adapter 1](screenshots/ubuntu-server-adapter-1.png)
-![Ubuntu Server Adapter 2](screenshots/ubuntu-server-adapter-2.png)
-![Windows Endpoint](screenshots/windows-endpoint-adapter1.png)
-![Windows Server](screenshots/windows-server-adapter1.png)
-![VBoxManage VM Modification](screenshots/VBoxManage-modifyvm.png)
+### Sysmon
 
-### Verifikasi Konektivitas
-![Ubuntu Wazuh Connectivity](screenshots/verifikasi-konektivitas-ubuntu-wazuh.png)
-![Windows Server Connectivity](screenshots/verifikasi-konektivitas-windows-server.png)
-![Windows Endpoint Connectivity](screenshots/verifikasi-konektivitas-windows-endpoint.png)
-![Kali Linux Connectivity](screenshots/verifikasi-konektivitas-kali-linux.png)
+!\[Sysmon Config](screenshots/sysmon-config.png)
 
-### Masalah: VLAN ID Tidak Muncul di Device Manager
-![VLAN Device Manager Issue](screenshots/windows-server-error-vlan-id-device-manager.png)
+### pfSense Log Forwarding
+
+!\[Firewall Rule Logging Enabled](screenshots/pfsense-rule-logging-enabled.png)
+!\[Alert Multiple Block Events](screenshots/wazuh-pfsense-alert-multiple-blocks.png)
+
+### Konfigurasi Network Ubuntu (netplan)
+
+```yaml
+network:
+  ethernets:
+    enp0s3:
+      dhcp4: no
+      addresses: \[192.168.1.30/24]
+      routes:
+        - to: default
+          via: 192.168.1.1
+      nameservers:
+        addresses: \[192.168.1.1, 8.8.8.8]
+  version: 2
+```
+

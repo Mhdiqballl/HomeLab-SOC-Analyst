@@ -77,3 +77,6 @@ Windows Defender dinonaktifkan, tidak ada LSA Protection, dan user menjalankan e
 
 #### Wazuh Proof
 ![Wazuh Proof](screenshots/wazuh-proof.png)
+
+#### Incident Response
+[Incident Report](reports/incident-report.md)

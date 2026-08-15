@@ -124,10 +124,65 @@ Wazuh sebagai HIDS fokus pada aktivitas endpoint, bukan traffic jaringan. Perlu 
 | Wazuh Rule 5760 | ✅ Terdeteksi | sshd authentication failed |
 | Journal SSH Ubuntu | ✅ Tercatat | 10 failed password attempt |
 
+
 ---
 
-## Screenshot
+## Case 4: Credential Dumping
+**MITRE ATT&CK:** T1003 (OS Credential Dumping)  
+**Tools:** Mimikatz  
+**Target:** Windows Server (192.168.20.10)
 
+### Langkah Serangan
+1. Download & jalankan Mimikatz
+2. `privilege::debug` → `sekurlsa::logonpasswords`
+3. NTLM hash berhasil diekstrak
+
+### Deteksi
+| Layer | Status | Keterangan |
+|-------|--------|------------|
+| Sysmon Event ID 10 | ✅ Terdeteksi | mimikatz.exe → lsass.exe (T1003) |
+| Wazuh Rule 92900 | ✅ Terdeteksi | Level 12 — Lsass accessed by mimikatz |
+
+---
+
+## Case 5: Lateral Movement
+**MITRE ATT&CK:** T1021 (Remote Services)  
+**Tools:** WMI (wmic)  
+**Target:** Windows 11 dari Windows Server
+
+### Langkah Serangan
+1. Konfigurasi Local Security Policy di target
+2. `wmic /node:192.168.30.10 process call create "cmd.exe"`
+3. ReturnValue = 0 (sukses)
+
+### Deteksi
+| Layer | Status | Keterangan |
+|-------|--------|------------|
+| Sysmon Event ID 1 | ✅ Terdeteksi | cmd.exe via WmiPrvSE.exe (T1047) |
+| Wazuh Rule 92031 | ✅ Terdeteksi | Discovery activity executed |
+
+---
+
+## Case 6: SQL Injection
+**MITRE ATT&CK:** T1190 (Exploit Public-Facing Application)  
+**Tools:** Manual SQL Injection (browser)  
+**Target:** DVWA (192.168.20.40)
+
+### Langkah Serangan
+1. Setup DVWA di Ubuntu Server, install Wazuh Agent
+2. Set security level Low
+3. Error confirmation: `1'` → 500 Internal Server Error
+4. Dump semua user: `1' OR '1'='1` → 5 user muncul
+5. Apache access log mencatat semua traffic SQLi
+
+### Deteksi
+| Layer | Status | Keterangan |
+|-------|--------|------------|
+| Apache access log | ✅ Tercatat | 500 error + 200 dump |
+| Wazuh Agent DVWA | ✅ Active | Rule 503/506 |
+| Alert SQL Injection | ❌ Tidak ada | Perlu custom decoder Apache |
+
+---
 
 ## Screenshot
 

@@ -135,9 +135,9 @@ Incident Investigation
 
 | Evidence | File |
 |---|---|
-| Sysmon Event 10 | [Sysmon Event 10](./screenshots/sysmon-event10.png) |
-| Wazuh Alert | [Wazuh Alert](./screenshots/wazuh-rule.id-92900.png) |
-| Mimikatz Output | [Mimikatz Output](./screenshots/mimikatz-output.png) |
+| Sysmon Event 10 | [Sysmon Event 10](/screenshots/sysmon-event10.png) |
+| Wazuh Alert | [Wazuh Alert](/screenshots/wazuh-rule.id-92900.png) |
+| Mimikatz Output | [Mimikatz Output](/screenshots/mimikatz-output.png) |
 
 ---
 

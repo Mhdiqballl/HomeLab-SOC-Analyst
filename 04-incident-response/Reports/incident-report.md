@@ -133,11 +133,11 @@ Incident Investigation
 
 ## Appendix
 
-| Evidence        | File                                  |
-| --------------- | ------------------------------------- |
-| Sysmon Event 10 | `tier2-case4-sysmon-event10.png`      |
-| Wazuh Alert     | `tier2-case4-wazuh-rule.id-92900.png` |
-| Mimikatz Output | `tier2-case4-mimikatz-output.png`     |
+| Evidence | File |
+|---|---|
+| Sysmon Event 10 | [View Screenshot](screenshots/tier2-case4-sysmon-event10.png) |
+| Wazuh Alert | [View Screenshot](screenshots/tier2-case4-wazuh-rule.id-92900.png) |
+| Mimikatz Output | [View Screenshot](screenshots/tier2-case4-mimikatz-output.png) |
 
 ---
 

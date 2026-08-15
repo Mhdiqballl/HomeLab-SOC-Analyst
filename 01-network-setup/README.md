@@ -48,7 +48,6 @@ Opsi "Priority & VLAN" hanya mengaktifkan fitur VLAN, tetapi tidak menyediakan f
 memasukkan VLAN ID (10, 20, 30).
 
 ### Solusi: Internal Network Terpisah via VBoxManage CLI
-```powershell
 VBoxManage modifyvm "pfSense-Firewall" --nic5 intnet --intnet5 "LabNet-MGMT"
 VBoxManage modifyvm "pfSense-Firewall" --nic6 intnet --intnet6 "LabNet-SERVER"
 VBoxManage modifyvm "pfSense-Firewall" --nic7 intnet --intnet7 "LabNet-ENDPOINT"

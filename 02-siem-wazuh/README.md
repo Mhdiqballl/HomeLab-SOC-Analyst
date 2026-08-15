@@ -73,31 +73,27 @@ Contoh potongan data hasil parsing yang berhasil (dari `archives.json`):
 
 ### Instalasi Wazuh
 
-!\[Log Instalasi Berhasil](screenshots/wazuh-installation-done.png)
-!\[Dashboard Login](screenshots/wazuh-dashboard-first-login.png)
+### Instalasi Wazuh
+![Log Instalasi Berhasil](screenshots/wazuh-installation-done.png)
+![Dashboard Login](screenshots/wazuh-dashboard-first-login.png)
 
 ### Agents
-
-!\[Agents Active](screenshots/dashboard-wazuh-agent-active.png)
-!\[Agent DVWA Active](screenshots/dashboard-wazuh-agent-dvwa-active.png)
-!\[Update Wazuh Agent](screenshots/update-wazuh-agent-windows.png)
+![Agents Active](screenshots/dashboard-wazuh-agent-active.png)
+![Agent DVWA Active](screenshots/dashboard-wazuh-agent-dvwa-active.png)
+![Update Wazuh Agent](screenshots/update-wazuh-agent-windows.png)
 
 ### Sysmon
-
-!\[Sysmon Windows Server](screenshots/config-sysmon-windows-server.png)
-!\[Sysmon Windows Endpoint](screenshots/config-sysmon-windows-endpoint.png)
+![Sysmon Windows Server](screenshots/config-sysmon-windows-server.png)
+![Sysmon Windows Endpoint](screenshots/config-sysmon-windows-endpoint.png)
 
 ### Alerts
-
-!\[Login Failure Windows Server](screenshots/alert-login-failure-windows-server.png)
-!\[Login Failure Windows Endpoint](screenshots/alert-login-failure-windows-endpoint.png)
+![Login Failure Windows Server](screenshots/alert-login-failure-windows-server.png)
+![Login Failure Windows Endpoint](screenshots/alert-login-failure-windows-endpoint.png)
 
 ### pfSense Log Forwarding
-
-!\[Remote Syslog Config](screenshots/pfsense-remote-syslog-config.png)
-!\[OSSEC Config](screenshots/konfigurasi-ossec.conf-log-forwarding-pfsense.png)
-!\[Filterlog Archives](screenshots/verifikasi-filterlog-archives.png)
-
+![Remote Syslog Config](screenshots/pfsense-remote-syslog-config.png)
+![OSSEC Config](screenshots/konfigurasi-ossec.conf-log-forwarding-pfsense.png)
+![Filterlog Archives](screenshots/verifikasi-filterlog-archives.png)
 
 
 ### Konfigurasi Network Ubuntu (netplan)

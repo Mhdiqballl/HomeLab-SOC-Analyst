@@ -62,13 +62,13 @@ Pada 7 Agustus 2026 pukul 00:07 UTC, Wazuh mendeteksi aktivitas mencurigakan di 
 
 |------|-------|-----------|
 
-| File | `C:\\\\\\\\\\\\\\\\Users\\\\\\\\\\\\\\\\Administrator\\\\\\\\\\\\\\\\Desktop\\\\\\\\\\\\\\\\mimikatz.exe` | Tool credential dumping |
+| File | `C:\\Users\\Administrator\\Desktop\\mimikatz.exe` | Tool credential dumping |
 
 | Hash NTLM | `af96405e0271c2fc308be85d9e487f7c` | Hash Administrator yang dicuri |
 
 | Process | `mimikatz.exe → lsass.exe` | Process access ke LSASS |
 
-| User | `HOMELAB\\\\\\\\\\\\\\\\Administrator` | Akun yang dikompromikan |
+| User | `HOMELAB\\Administrator` | Akun yang dikompromikan |
 
 | IP Target | `192.168.20.10` | Windows Server terdampak |
 

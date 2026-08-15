@@ -1,55 +1,96 @@
 # Fase 2: SIEM Wazuh
 
 ## Tujuan
-
 Membangun SIEM (Security Information and Event Management) menggunakan Wazuh untuk mengumpulkan, menganalisis, dan mendeteksi ancaman dari seluruh endpoint di jaringan lab.
 
 ## Tools yang Digunakan
+- Wazuh 4.14 (Indexer, Server/Manager, Dashboard — all-in-one installer)
+- Ubuntu Server 22.04 LTS
+- Sysmon 15.21 (Windows endpoint logging)
+- Filebeat 7.10.2
+- Windows Server 2022, Windows 11 (agent)
+- pfSense CE 2.8.1 (syslog forwarding)
 
-* Wazuh 4.14 (Indexer, Server/Manager, Dashboard — metode all-in-one)
-* Ubuntu Server 22.04 LTS
-* Sysmon (Windows endpoint logging)
+## Arsitektur Final (Setelah VLAN)
+| Komponen | IP |
+|----------|-----|
+| Wazuh Server (Ubuntu 22.04) | 192.168.20.30 (SERVER VLAN 20) |
+| Dashboard | https://192.168.56.104 (Host-Only) |
+| Agent Windows Server | 192.168.20.10 (SERVER VLAN 20) |
+| Agent Windows 11 | 192.168.30.10 (ENDPOINT VLAN 30) |
+| Agent DVWA | 192.168.20.40 (SERVER VLAN 20) |
+| pfSense Log Forwarding | syslog UDP 514 → Wazuh archives |
+
+## Komponen Status
+| Komponen | Status |
+|----------|--------|
+| Wazuh Indexer | ✅ Running |
+| Wazuh Manager | ✅ Running |
+| Wazuh Dashboard | ✅ Running (HTTPS) |
+| Agent Windows Server (ID 001) | ✅ Active |
+| Agent Windows 11 (ID 002) | ✅ Active |
+| Agent DVWA (ID 003) | ✅ Active |
+| Sysmon | ✅ Running |
+| pfSense Log Forwarding | ✅ Archives |
+
+## Kredensial
+- User: `admin`
+- Password: *(tersimpan di `wazuh-install-files.tar` → `wazuh-passwords.txt`)*
 
 ## Langkah yang Dilakukan
-
 1. Update sistem Ubuntu, konfigurasi static IP dan DNS
 2. Pre-check port 443/80 sebelum instalasi
 3. Download dan jalankan installer Wazuh (`wazuh-install.sh -a`)
 4. Verifikasi akses dashboard dan catat kredensial admin
-5. Buka port firewall (UFW) untuk komunikasi agent
-6. Install Wazuh Agent di Windows Server dan Windows 10/11
+5. Buka port firewall (UFW) untuk komunikasi agent (1514, 1515, 55000, 443)
+6. Install Wazuh Agent di Windows Server dan Windows 11
 7. Install Sysmon di kedua endpoint Windows, hubungkan log ke Wazuh Agent
-8. Verifikasi semua agent berstatus Active di dashboard
+8. Konfigurasi pfSense remote syslog ke Wazuh (UDP 514)
+9. Update konfigurasi agent dan pfSense setelah perubahan IP VLAN
+10. Verifikasi semua agent berstatus Active di dashboard
 
-## Kendala yang Ditemui (Bagian Penting — Proses Troubleshooting)
+## Troubleshooting Utama
 
-Proses instalasi Wazuh mengalami beberapa kegagalan berurutan sebelum berhasil, didokumentasikan sebagai bukti proses debugging nyata:
+### Instalasi Wazuh
+| Masalah | Solusi |
+|---------|--------|
+| Ubuntu 26.04 dashboard gagal install | OS belum didukung — turunkan ke Ubuntu 22.04 LTS |
+| Indexer timeout ±25 menit | Naikkan RAM VM, extend `TimeoutStartSec` |
+| Disk penuh 100% (`/var/ossec` 17GB) | Resize LVM dari 29GB ke 57GB |
+| SSL error | Reinstall bersih dengan installer resmi |
 
-1. **Percobaan di Ubuntu 26.04**: instalasi Wazuh Dashboard gagal (`ERROR: Wazuh dashboard installation failed`). Setelah riset, ditemukan Ubuntu 26.04 belum masuk daftar OS resmi yang didukung Wazuh 4.14.
-2. **Riset kompatibilitas OS**: dokumentasi resmi Wazuh dan laporan bug komunitas (termasuk kasus serupa di Ubuntu 24.04 fresh install) mengarahkan ke kesimpulan bahwa **Ubuntu 22.04 LTS** adalah pilihan paling stabil karena paling matang diuji.
-3. **Percobaan di Ubuntu 22.04**: Wazuh Indexer gagal start dengan error `timeout was exceeded` setelah proses hang selama ±25 menit tanpa pesan error yang jelas di log.
-4. **Diagnosis**: dicek `vm.max\\\\\\\_map\\\\\\\_count` (sudah sesuai standar `262144`), RAM, dan disk space — mengarah pada dugaan resource CPU/RAM VM kurang untuk proses bootstrap OpenSearch yang berat.
-5. **Solusi yang diterapkan**: menaikkan RAM VM, extend timeout systemd (`TimeoutStartSec`), dan mematikan VM lain saat instalasi supaya resource laptop fokus ke satu proses.
+### pfSense Log Forwarding
+| Masalah | Solusi |
+|---------|--------|
+| `tcpdump` 0 packets | Aktifkan "Log packets" di firewall rule pfSense |
+| `filterlog` tidak terkirim | Hapus pengecualian `!filterlog` di `pfSense.conf` |
+| Syslog ditolak Wazuh | Daftarkan pfSense sebagai agent, update `allowed-ips` |
 
-### Troubleshooting Log Forwarding pfSense → Wazuh
+### Konfigurasi pfSense (Remote Syslog)
+- Remote Syslog Server: `192.168.20.30:514`
+- Source Address: `SERVER` (`192.168.20.1`)
+- Centang **Firewall Events**
+- Hapus pengecualian `!filterlog` di `/var/etc/syslog.d/pfSense.conf`
 
-Setelah Wazuh Server, Agent, dan Sysmon berhasil berjalan normal, muncul kendala baru: log firewall pfSense yang diteruskan lewat syslog **tidak muncul sebagai alert** di dashboard, meskipun konfigurasi terlihat benar. Proses debugging-nya:
+### Konfigurasi Wazuh (ossec.conf)
+```xml
+<remote>
+  <connection>syslog</connection>
+  <port>514</port>
+  <protocol>udp</protocol>
+  <allowed-ips>192.168.20.1</allowed-ips>
+</remote>
 
-1. **Cek konektivitas dasar**: `tcpdump` di sisi Ubuntu awalnya menunjukkan **0 packets captured** di port 514 — artinya pfSense belum benar-benar mengirim data apapun.
-2. **Cek isi file log pfSense di Ubuntu**: ternyata hanya berisi log sistem biasa (ntpd, cron), tidak ada event firewall (`filterlog`) sama sekali.
-3. **Ditemukan akar masalah #1**: rule firewall pfSense (**"Default allow LAN to any rule"**) defaultnya **tidak mencentang opsi "Log packets that are handled by this rule"** — pfSense tidak otomatis mencatat traffic yang lewat kecuali logging diaktifkan manual per-rule.
-4. **Setelah logging diaktifkan**: log `filterlog` mulai muncul dengan format lengkap dan berhasil di-decode oleh decoder bawaan Wazuh (`0455-pfsense\\\\\\\_decoders.xml`) — field seperti `srcip`, `dstip`, `protocol`, `action` berhasil ter-parsing dengan benar (dikonfirmasi lewat `archives.json` setelah `logall\\\\\\\_json` diaktifkan).
-5. **Tetap tidak muncul di dashboard sebagai alert**: investigasi ke rule bawaan Wazuh (`0540-pfsense\\\\\\\_rules.xml`) mengungkap penyebabnya — rule `87701` (pfSense firewall drop event) memang sengaja diberi `<options>no\\\\\\\_log</options>` oleh Wazuh, supaya setiap single block event tidak membanjiri dashboard dengan noise.
-6. **Solusi**: ditemukan rule `87702` yang levelnya lebih tinggi (level 10) dan **tidak** di-suppress — trigger ketika ada **≥18 block event dalam 45 detik dari sumber IP yang sama** (MITRE ATT\&CK T1110 - Brute Force). Dengan generate traffic block berulang dalam waktu singkat, alert ini berhasil muncul di dashboard.
+### Konfigurasi Wazuh (`ossec.conf`)
 
-**Pembelajaran**: ini mengajarkan cara kerja nyata SIEM tuning — tidak semua log yang berhasil di-parse otomatis jadi alert; ada logika threshold dan suppression yang disengaja untuk mengurangi alert fatigue, dan kemampuan membaca ruleset (`decoders`/`rules` XML) untuk mendiagnosis kenapa sebuah event tidak muncul adalah skill inti SOC/detection engineering.
+```<address>192.168.20.30</address>```
 
-Contoh potongan data hasil parsing yang berhasil (dari `archives.json`):
+Contoh Data pfSense (dari `archives.json`):
 
 ```json
 {
   "predecoder": {
-    "program\\\\\\\_name": "filterlog",
+    "program_name": "filterlog",
     "hostname": "pfsense.home.arpa"
   },
   "decoder": { "name": "pf" },
@@ -65,9 +106,22 @@ Contoh potongan data hasil parsing yang berhasil (dari `archives.json`):
 }
 ```
 
-## Hasil
+### Konfigurasi Network Ubuntu (netplan)
 
-*(isi setelah Wazuh berhasil terinstall dan agent aktif)*
+```yaml
+network:
+  ethernets:
+    enp0s3:
+      dhcp4: no
+      addresses: [192.168.1.30/24]
+      routes:
+        - to: default
+          via: 192.168.1.1
+      nameservers:
+        addresses: [192.168.1.1, 8.8.8.8]
+  version: 2
+```
+
 
 ## Screenshot
 
@@ -94,21 +148,4 @@ Contoh potongan data hasil parsing yang berhasil (dari `archives.json`):
 ![Remote Syslog Config](screenshots/pfsense-remote-syslog-config.png)
 ![OSSEC Config](screenshots/konfigurasi-ossec.conf-log-forwarding-pfsense.png)
 ![Filterlog Archives](screenshots/verifikasi-filterlog-archives.png)
-
-
-### Konfigurasi Network Ubuntu (netplan)
-
-```yaml
-network:
-  ethernets:
-    enp0s3:
-      dhcp4: no
-      addresses: \\\\\\\[192.168.1.30/24]
-      routes:
-        - to: default
-          via: 192.168.1.1
-      nameservers:
-        addresses: \\\\\\\[192.168.1.1, 8.8.8.8]
-  version: 2
-```
 
